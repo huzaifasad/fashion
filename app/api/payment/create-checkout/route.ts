@@ -57,8 +57,8 @@ export async function POST(request: Request) {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/payment/success?session_id={CHECKOUT_SESSION_ID}&outfit_id=${outfitId || ""}&type=${type || "outfit_unlock"}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/outfits`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://buythelook.pdfwhisperer.xyz"}/payment/success?session_id={CHECKOUT_SESSION_ID}&outfit_id=${outfitId || ""}&type=${type || "outfit_unlock"}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://buythelook.pdfwhisperer.xyz"}/outfits`,
       metadata: {
         outfitId: outfitId || "",
         type: type || "outfit_unlock",
