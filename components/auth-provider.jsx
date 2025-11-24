@@ -56,8 +56,7 @@ export function AuthProvider({ children }) {
         },
         // Email verification redirect URL
         emailRedirectTo:
-          process.env.NEXT_PUBLIC_SUPABASE_AUTH_REDIRECT_URL ||
-          `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`,
+          `https://buythelook.pdfwhisperer.xyz/auth/callback`,
       },
     })
 
