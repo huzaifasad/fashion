@@ -1,0 +1,70 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+.cache/
+.temp/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+logs/*.log
+debug.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Dependencies
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Next.js
+.next/
+out/
+
+# Vite
+vite.config.ts.timestamp*
+vite.config.js.timestamp*
+.vite/
+
+# Remix
+build/
+public/build/
+
+# Svelte / Astro (if any)
+.svelte-kit/
+.vercel/
+.netlify/
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+.playwright/
+test-results/
+
+# Images Cache
+*.png~
+*.jpg~
+*.jpeg~
+
+# Other
+*.swp
+*.swo
+*.bak
