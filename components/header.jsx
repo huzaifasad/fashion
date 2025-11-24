@@ -123,7 +123,7 @@ export function Header() {
             </Link>
           )}
 
-          <Link href="/cart" className="relative group p-2">
+          {/* <Link href="/cart" className="relative group p-2">
             <svg
               className="w-5 h-5 text-foreground transition-transform group-hover:scale-110"
               fill="none"
@@ -142,7 +142,7 @@ export function Header() {
                 {totalItems}
               </span>
             )}
-          </Link>
+          </Link> */}
 
           <button className="md:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

@@ -1,17 +1,34 @@
 import { type NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
-import { supabaseAdmin } from "@/lib/supabase-admin"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-12-18.acacia" })
+function getStripe() {
+  const secretKey = process.env.STRIPE_SECRET_KEY
+  if (!secretKey) {
+    throw new Error("STRIPE_SECRET_KEY is not set")
+  }
+  return new Stripe(secretKey, { apiVersion: "2024-12-18.acacia" })
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
-  const sig = req.headers.get("stripe-signature")!
+  const sig = req.headers.get("stripe-signature")
+
+  if (!sig) {
+    return NextResponse.json({ error: "Missing stripe-signature header" }, { status: 400 })
+  }
+
+  const stripe = getStripe()
+  const supabaseAdmin = getSupabaseAdmin()
 
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+    if (!webhookSecret) {
+      throw new Error("STRIPE_WEBHOOK_SECRET is not set")
+    }
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
   } catch (err: any) {
     console.error(`[v0] Webhook signature verification failed:`, err.message)
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 })

@@ -1,21 +1,32 @@
 import { createClient } from "@supabase/supabase-js"
 
-// This bypasses RLS and must be kept secret
-const SUPABASE_AUTH_URL = process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL
-const SUPABASE_AUTH_SERVICE_KEY = process.env.SUPABASE_AUTH_SERVICE_ROLE_KEY
+let _supabaseAdmin: ReturnType<typeof createClient> | null = null
 
-if (!SUPABASE_AUTH_URL || !SUPABASE_AUTH_SERVICE_KEY) {
-  // Warn on server side
-  console.warn("[v0] Supabase Admin: Missing environment variables.")
+export function getSupabaseAdmin() {
+  if (!_supabaseAdmin) {
+    const SUPABASE_AUTH_URL = process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL
+    const SUPABASE_AUTH_SERVICE_KEY = process.env.SUPABASE_AUTH_SERVICE_ROLE_KEY
+
+    if (!SUPABASE_AUTH_URL || !SUPABASE_AUTH_SERVICE_KEY) {
+      throw new Error(
+        "Missing Supabase environment variables. Please ensure NEXT_PUBLIC_SUPABASE_AUTH_URL and SUPABASE_AUTH_SERVICE_ROLE_KEY are set.",
+      )
+    }
+
+    _supabaseAdmin = createClient(SUPABASE_AUTH_URL, SUPABASE_AUTH_SERVICE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  }
+
+  return _supabaseAdmin
 }
 
-export const supabaseAdmin = createClient(
-  SUPABASE_AUTH_URL || "https://placeholder.supabase.co",
-  SUPABASE_AUTH_SERVICE_KEY || "placeholder",
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
+export const supabaseAdmin = new Proxy({} as ReturnType<typeof createClient>, {
+  get(target, prop) {
+    const client = getSupabaseAdmin()
+    return client[prop as keyof typeof client]
   },
-)
+})
