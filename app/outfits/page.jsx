@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { supabaseAuth } from "@/lib/supabase-auth-client"
 import { useAuth } from "@/components/auth-provider"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import OnboardingTour from "@/components/onboarding-tour"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -788,6 +789,7 @@ function OutfitsContent() {
 
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
+      <OnboardingTour pageType="outfits" />
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -800,7 +802,7 @@ function OutfitsContent() {
           </p>
         </motion.div>
 
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-12" data-tour="outfits-filters">
           <Tabs value={filter} onValueChange={setFilter} className="w-full max-w-md">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="all">All ({outfits.length})</TabsTrigger>
@@ -814,6 +816,7 @@ function OutfitsContent() {
           initial="hidden"
           animate="show"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          data-tour="outfits-grid"
         >
           {filteredOutfits.map((outfit, index) => (
             <motion.div key={outfit.id} variants={itemVariants}>

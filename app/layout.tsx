@@ -1,13 +1,12 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Playfair_Display, Lato, Space_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { CartProvider } from "@/lib/cart-context"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Header } from "@/components/header"
 import { Toaster } from "@/components/ui/toaster"
-import { AuthProvider } from "@/components/auth-provider" // Import AuthProvider
+import { AuthProvider } from "@/components/auth-provider"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -29,7 +28,7 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "BuyTheLook | Luxury AI Fashion Curator",
   description: "Discover personalized high-end fashion looks curated by AI.",
-    generator: 'v0.app'
+  generator: "v0.app",
 }
 
 export default function RootLayout({
@@ -51,7 +50,6 @@ export default function RootLayout({
             </CartProvider>
           </AuthProvider>
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   )

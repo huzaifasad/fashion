@@ -315,7 +315,7 @@ export function QuizFlow({ styledProfile }) {
     <div className="container mx-auto max-w-4xl px-4 py-8 animate-fade-in">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
 
-      <div className="mb-12">
+      <div className="mb-12" data-tour="progress-bar">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-medium tracking-wide text-foreground/80">
             Step {currentStep + 1} of {activeSteps.length}
@@ -330,7 +330,7 @@ export function QuizFlow({ styledProfile }) {
         </div>
       </div>
 
-      <div className="mb-12 animate-fade-up">
+      <div className="mb-12 animate-fade-up" data-tour="quiz-start">
         <h1 className="mb-3 text-4xl font-bold tracking-tight text-foreground md:text-5xl text-balance font-serif">
           {currentQuestion.question}
         </h1>
@@ -351,7 +351,7 @@ export function QuizFlow({ styledProfile }) {
           />
         </div>
       ) : (
-        <div className="mb-12 grid gap-4 md:grid-cols-2">
+        <div className="mb-12 grid gap-4 md:grid-cols-2" data-tour="quiz-options">
           {currentQuestion.options.map((option, index) => {
             const isSelected = currentQuestion.multiple
               ? (quizData[currentQuestion.id] || []).includes(option.value)
@@ -407,7 +407,7 @@ export function QuizFlow({ styledProfile }) {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-tour="quiz-navigation">
         <Button
           variant="outline"
           onClick={handleBack}

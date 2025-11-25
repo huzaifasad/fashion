@@ -5,16 +5,17 @@ import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { CREDIT_PACKAGES, type CreditPackage } from "@/lib/credit-packages"
+import { CREDIT_PACKAGES } from "@/lib/credit-packages"
 import { Check, Sparkles, Zap, Crown, Loader2 } from "lucide-react"
+import OnboardingTour from "@/components/onboarding-tour"
 
 export default function CreditsPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
+  const [selectedPackage, setSelectedPackage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const handlePurchase = async (pkg: CreditPackage) => {
+  const handlePurchase = async (pkg) => {
     if (!user) {
       router.push("/login?redirect=/credits")
       return
@@ -49,7 +50,7 @@ export default function CreditsPage() {
     }
   }
 
-  const getIcon = (index: number) => {
+  const getIcon = (index) => {
     const icons = [Zap, Sparkles, Crown]
     const Icon = icons[index]
     return <Icon className="w-6 h-6" />
@@ -66,6 +67,7 @@ export default function CreditsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Header />
+      <OnboardingTour pageType="credits" />
       <main className="flex-1 container mx-auto px-6 py-32">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -76,11 +78,11 @@ export default function CreditsPage() {
             </p>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6" data-tour="credits-packages">
             {CREDIT_PACKAGES.map((pkg, index) => (
               <div
                 key={pkg.id}
+                data-tour={pkg.popular ? "credits-popular" : undefined}
                 className={`relative p-8 border bg-white/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg ${
                   pkg.popular ? "border-black scale-105 shadow-md" : "border-border hover:border-black/50"
                 }`}

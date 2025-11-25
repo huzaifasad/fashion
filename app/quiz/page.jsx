@@ -9,6 +9,7 @@ import { supabaseAuth } from "@/lib/supabase-auth-client"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { storage } from "@/lib/storage"
+import OnboardingTour from "@/components/onboarding-tour"
 
 export default function QuizPage() {
   const { user, loading } = useAuth()
@@ -208,6 +209,7 @@ export default function QuizPage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <OnboardingTour />
       <QuizFlow styledProfile={useProfile ? styledProfile : null} />
     </main>
   )

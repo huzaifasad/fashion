@@ -78,7 +78,6 @@
 }
 
 @theme inline {
-  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -126,7 +125,6 @@
   }
 }
 
-/* Base */
 body {
   background-color: var(--background);
   color: var(--foreground);
@@ -145,8 +143,6 @@ h6 {
   letter-spacing: -0.01em;
 }
 
-/* Added warmer tones and softer shadows for cozy luxury feel */
-
 /* Luxury Input Styles */
 .input-underlined {
   background: transparent !important;
@@ -162,18 +158,17 @@ h6 {
   padding-left: 8px !important;
 }
 
-/* Background Texture for Sections */
+/* Background Texture */
 .bg-texture-floral {
   background-color: #fefefe;
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3Csvg%3E");
 }
 
-/* Cozy shadows and soft transitions */
 .hover\:shadow-xl:hover {
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
 }
 
-/* Added infinite scroll animation for collections section */
+/* Infinite scroll animation */
 @keyframes infinite-scroll {
   0% {
     transform: translateX(0);
@@ -184,7 +179,6 @@ h6 {
 }
 
 .animate-infinite-scroll {
-  /* Slowed down the animation from 40s to 120s */
   animation: infinite-scroll 120s linear infinite;
   display: flex;
   width: max-content;
@@ -192,4 +186,534 @@ h6 {
 
 .animate-infinite-scroll:hover {
   animation-play-state: paused;
+}
+
+/* ====================================
+   STELLA FASHION FAIRY - LUXURY ANIMATIONS
+   ==================================== */
+
+/* Radial gradient utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Fairy glow aura */
+@keyframes fairy-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+.animate-fairy-glow {
+  animation: fairy-glow 4s ease-in-out infinite;
+}
+
+/* Fairy idle float */
+@keyframes fairy-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-fairy-idle {
+  animation: fairy-idle 3.5s ease-in-out infinite;
+}
+
+/* Fairy speaking animation */
+@keyframes fairy-speak {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) scale(1.01);
+  }
+  50% {
+    transform: translateY(-1px) scale(1);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.005);
+  }
+}
+
+.animate-fairy-speak {
+  animation: fairy-speak 1.2s ease-in-out infinite;
+}
+
+/* Floating sparkles */
+@keyframes float-sparkle-1 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1);
+  }
+  80% {
+    opacity: 0.8;
+    transform: translateY(-25px) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0);
+  }
+}
+
+@keyframes float-sparkle-2 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(3px, -5px) rotate(45deg) scale(1);
+  }
+  85% {
+    opacity: 0.6;
+    transform: translate(-5px, -20px) rotate(180deg) scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-8px, -25px) rotate(200deg) scale(0);
+  }
+}
+
+@keyframes float-sparkle-3 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-5px, -8px) scale(1);
+  }
+  75% {
+    opacity: 0.5;
+    transform: translate(5px, -22px) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -28px) scale(0);
+  }
+}
+
+@keyframes float-sparkle-4 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1);
+  }
+  70% {
+    opacity: 0.7;
+    transform: translateY(-18px) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0);
+  }
+}
+
+@keyframes float-sparkle-5 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+  20% {
+    opacity: 0.8;
+    transform: translate(8px, -6px) scale(0.9);
+  }
+  80% {
+    opacity: 0.4;
+    transform: translate(-3px, -20px) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-6px, -26px) scale(0);
+  }
+}
+
+@keyframes float-sparkle-6 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-4px, -3px) rotate(30deg) scale(1);
+  }
+  90% {
+    opacity: 0.3;
+    transform: translate(6px, -24px) rotate(270deg) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -30px) rotate(300deg) scale(0);
+  }
+}
+
+.animate-float-sparkle-1 {
+  animation: float-sparkle-1 3s ease-in-out infinite;
+}
+.animate-float-sparkle-2 {
+  animation: float-sparkle-2 3.5s ease-in-out infinite 0.3s;
+}
+.animate-float-sparkle-3 {
+  animation: float-sparkle-3 4s ease-in-out infinite 0.6s;
+}
+.animate-float-sparkle-4 {
+  animation: float-sparkle-4 3.2s ease-in-out infinite 0.9s;
+}
+.animate-float-sparkle-5 {
+  animation: float-sparkle-5 3.8s ease-in-out infinite 1.2s;
+}
+.animate-float-sparkle-6 {
+  animation: float-sparkle-6 4.2s ease-in-out infinite 1.5s;
+}
+
+/* Wing flutter animations */
+@keyframes wing-flutter-left {
+  0%,
+  100% {
+    transform: rotate(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(-10deg) scaleX(0.96);
+  }
+}
+
+@keyframes wing-flutter-right {
+  0%,
+  100% {
+    transform: rotate(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(10deg) scaleX(0.96);
+  }
+}
+
+.animate-wing-flutter-left {
+  animation: wing-flutter-left 2s ease-in-out infinite;
+  transform-origin: right center;
+}
+
+.animate-wing-flutter-right {
+  animation: wing-flutter-right 2s ease-in-out infinite 0.1s;
+  transform-origin: left center;
+}
+
+/* Hair sway */
+@keyframes hair-sway {
+  0%,
+  100% {
+    transform: skewX(0deg) translateX(0);
+  }
+  50% {
+    transform: skewX(1deg) translateX(1px);
+  }
+}
+
+@keyframes hair-sway-reverse {
+  0%,
+  100% {
+    transform: skewX(0deg) translateX(0);
+  }
+  50% {
+    transform: skewX(-1deg) translateX(-1px);
+  }
+}
+
+.animate-hair-sway {
+  animation: hair-sway 4s ease-in-out infinite;
+}
+.animate-hair-sway-reverse {
+  animation: hair-sway-reverse 4s ease-in-out infinite 0.5s;
+}
+
+@keyframes hair-strand {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes hair-strand-reverse {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+}
+
+.animate-hair-strand {
+  animation: hair-strand 3s ease-in-out infinite;
+  transform-origin: top center;
+}
+.animate-hair-strand-reverse {
+  animation: hair-strand-reverse 3s ease-in-out infinite 0.3s;
+  transform-origin: top center;
+}
+
+/* Arm gentle movement */
+@keyframes arm-gentle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+}
+
+.animate-arm-gentle {
+  animation: arm-gentle 4s ease-in-out infinite;
+  transform-origin: top right;
+}
+
+/* Wand wave */
+@keyframes wand-wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-4deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+
+.animate-wand-wave {
+  animation: wand-wave 2.5s ease-in-out infinite;
+}
+
+/* Star pulse on wand */
+@keyframes star-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 3px rgba(253, 224, 71, 0.6));
+  }
+  50% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 10px rgba(253, 224, 71, 1));
+  }
+}
+
+.animate-star-pulse {
+  animation: star-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes star-glow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.3);
+  }
+}
+
+.animate-star-glow {
+  animation: star-glow 2s ease-in-out infinite;
+}
+
+/* Dress shimmer */
+@keyframes dress-shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) skewX(-15deg);
+  }
+}
+
+.animate-dress-shimmer {
+  animation: dress-shimmer 5s ease-in-out infinite;
+}
+
+/* Earring sway */
+@keyframes earring-sway {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(4deg) translateY(0.5px);
+  }
+  75% {
+    transform: rotate(-3deg) translateY(0.5px);
+  }
+}
+
+@keyframes earring-sway-reverse {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(-4deg) translateY(0.5px);
+  }
+  75% {
+    transform: rotate(3deg) translateY(0.5px);
+  }
+}
+
+.animate-earring-sway {
+  animation: earring-sway 2.5s ease-in-out infinite;
+  transform-origin: top center;
+}
+.animate-earring-sway-reverse {
+  animation: earring-sway-reverse 2.5s ease-in-out infinite 0.2s;
+  transform-origin: top center;
+}
+
+/* Hair accessory shine */
+@keyframes accessory-shine {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.9));
+  }
+}
+
+.animate-accessory-shine {
+  animation: accessory-shine 2s ease-in-out infinite;
+}
+
+@keyframes pin-sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pin-sparkle {
+  animation: pin-sparkle 1.5s ease-in-out infinite;
+}
+
+/* Eyes animations */
+@keyframes eyes-engaged {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(0.5px);
+  }
+  70% {
+    transform: translateX(-0.5px);
+  }
+}
+
+@keyframes eyes-blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+.animate-eyes-engaged {
+  animation: eyes-engaged 2.5s ease-in-out infinite;
+}
+.animate-eyes-blink {
+  animation: eyes-blink 4s ease-in-out infinite;
+}
+
+/* Lips talk */
+@keyframes lips-talk {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+  20% {
+    transform: scaleY(1.15) scaleX(0.95);
+  }
+  40% {
+    transform: scaleY(0.85) scaleX(1.05);
+  }
+  60% {
+    transform: scaleY(1.1) scaleX(0.97);
+  }
+  80% {
+    transform: scaleY(0.9) scaleX(1.03);
+  }
+}
+
+.animate-lips-talk {
+  animation: lips-talk 0.35s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Tooltip entrance */
+@keyframes tooltip-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-tooltip-enter {
+  animation: tooltip-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Joyride spotlight override for better visibility */
+.__floater {
+  z-index: 10001 !important;
+}
+
+.react-joyride__spotlight {
+  border-radius: 8px !important;
+}
+
+/* Ensure tooltip is always visible and centered properly */
+.onboarding-tooltip {
+  z-index: 10002 !important;
 }
