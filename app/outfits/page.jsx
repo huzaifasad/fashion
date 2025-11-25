@@ -204,7 +204,7 @@ function CarouselGridItem({ item, isMain = false }) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length)
-    }, 5000)
+    }, 10000)
 
     return () => clearInterval(interval)
   }, [images.length, isHovered])
