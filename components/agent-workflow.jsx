@@ -55,6 +55,14 @@ export function AgentWorkflow({ currentStep, logs, skipImageAnalysis = false }) 
         <p className="text-muted-foreground text-lg font-light tracking-wide max-w-xl mx-auto">
           Our agents are analyzing thousands of combinations to find your perfect match.
         </p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-6 text-sm text-accent font-medium animate-pulse"
+        >
+          This may take up to one minute...
+        </motion.p>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

@@ -188,6 +188,12 @@ export default function ProfilePage() {
 
             <div className="flex flex-col gap-4">
               <button
+                onClick={() => router.push("/credits")}
+                className="w-full py-4 border border-black bg-black text-white hover:bg-gray-800 transition-all duration-300 uppercase text-xs tracking-[0.2em] font-medium"
+              >
+                Buy More Credits
+              </button>
+              <button
                 onClick={() => router.push("/outfits")}
                 className="w-full py-4 border border-black bg-white hover:bg-black hover:text-white transition-all duration-300 uppercase text-xs tracking-[0.2em] font-medium"
               >

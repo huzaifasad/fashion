@@ -39,6 +39,18 @@ export function AuthProvider({ children }) {
     router.push("/")
   }
 
+  const signInWithGoogle = async () => {
+    const { error } = await supabaseAuth.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo:
+          process.env.NEXT_PUBLIC_SUPABASE_AUTH_REDIRECT_URL ||
+          `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`,
+      },
+    })
+    if (error) throw error
+  }
+
   const signUp = async (email, password, fullName) => {
     // Check if user already exists
     const { data: existingUser } = await supabaseAuth.from("profiles").select("id").eq("id", email).single()
@@ -54,15 +66,14 @@ export function AuthProvider({ children }) {
         data: {
           full_name: fullName,
         },
-        // Email verification redirect URL
         emailRedirectTo:
+          
           `https://buythelook.pdfwhisperer.xyz/auth/callback`,
       },
     })
 
     if (error) throw error
 
-    // Check if email confirmation is required
     if (data?.user && !data.user.confirmed_at) {
       return { requiresEmailConfirmation: true }
     }
@@ -75,7 +86,11 @@ export function AuthProvider({ children }) {
     router.push("/")
   }
 
-  return <AuthContext.Provider value={{ user, signIn, signUp, signOut, loading }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, signIn, signUp, signOut, signInWithGoogle, loading }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => useContext(AuthContext)

@@ -151,7 +151,7 @@ export default function HomePage() {
                 Established 2024
               </span>
 
-              <h1 className="text-[18vw] sm:text-[15vw] md:text-[12vw] lg:text-[10rem] xl:text-[11rem] leading-[0.85] font-serif tracking-tight text-black mb-16">
+              <h1 className="text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[8rem] xl:text-[9rem] leading-[0.85] font-serif tracking-tight text-black mb-16">
                 The Art
                 <br />
                 of Style

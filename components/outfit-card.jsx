@@ -2,11 +2,11 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Lock } from "lucide-react"
+import { Lock, ExternalLink, CheckCircle, ShoppingBag } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 
-export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
+export function OutfitCard({ outfit, isUnlocked, hasLinksUnlocked, onUnlock, hideActions = false }) {
   const [imageErrors, setImageErrors] = useState({})
   const [isHovered, setIsHovered] = useState(false)
   const [activeItemIndex, setActiveItemIndex] = useState(0)
@@ -17,7 +17,7 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
     if (isHovered && outfit.items?.length > 0) {
       carouselIntervalRef.current = setInterval(() => {
         setActiveItemIndex((prev) => (prev + 1) % Math.min(outfit.items.length, 3))
-      }, 2000) // Rotate every 2 seconds
+      }, 2000)
     } else {
       if (carouselIntervalRef.current) {
         clearInterval(carouselIntervalRef.current)
@@ -84,7 +84,6 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
   }
 
   const handleImageError = (index) => {
-    console.log(`[v0] Image load failed for item ${index}, switching to fallback`)
     setImageErrors((prev) => ({ ...prev, [index]: true }))
   }
 
@@ -96,6 +95,12 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
     return itemsArray.reduce((sum, item) => sum + (item?.price || 0), 0)
   }
 
+  const ensureAbsoluteUrl = (url) => {
+    if (!url) return "#"
+    if (url.startsWith("http://") || url.startsWith("https://")) return url
+    return `https://${url}`
+  }
+
   const totalPrice = calculateTotalPrice()
 
   return (
@@ -104,6 +109,13 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {hasLinksUnlocked && (
+        <div className="absolute top-4 left-4 z-30 flex items-center gap-1.5 bg-green-500 text-white px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase">
+          <CheckCircle className="w-3 h-3" />
+          Links Unlocked
+        </div>
+      )}
+
       <div className="relative aspect-[3/4] bg-[#FAFAFA] overflow-hidden">
         {/* Full card carousel overlay that appears on hover */}
         <div
@@ -119,7 +131,7 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
-              priority // Prioritize loading the hover image
+              priority
             />
 
             <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
@@ -128,6 +140,20 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
               </p>
               <p className="text-lg font-serif text-white mb-1">{outfit.items[activeItemIndex]?.name}</p>
               <p className="text-sm text-white/90 font-medium">${outfit.items[activeItemIndex]?.price?.toFixed(2)}</p>
+
+              {hasLinksUnlocked && outfit.items[activeItemIndex]?.product_url && (
+                <a
+                  href={ensureAbsoluteUrl(outfit.items[activeItemIndex].product_url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-3 text-xs font-bold tracking-wider text-white bg-white/20 hover:bg-white/30 px-4 py-2 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  Shop Now
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </div>
 
             {/* Progress Indicators */}
@@ -200,27 +226,57 @@ export function OutfitCard({ outfit, isUnlocked, onUnlock }) {
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="mt-auto">
-        {isUnlocked ? (
-          <Link
-            href={`/outfit/${outfit.id}`}
-            className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-colors duration-300"
-          >
-            View Collection
-          </Link>
-        ) : (
-          <button
-            onClick={() => onUnlock(outfit.id)}
-            className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-all duration-300 border-t border-white/10"
-          >
-            <span className="flex items-center justify-center gap-2">
-              <Lock className="w-3.5 h-3.5" /> Unlock Collection (1 Credit)
-            </span>
-          </button>
+        {hasLinksUnlocked && (
+          <div className="border-t border-black/10 pt-5 space-y-3">
+            <p className="text-[10px] font-bold tracking-[0.25em] text-green-600 uppercase flex items-center gap-2">
+              <ShoppingBag className="w-3.5 h-3.5" />
+              Shopping Links
+            </p>
+            <div className="space-y-2">
+              {outfit.items.slice(0, 3).map(
+                (item, idx) =>
+                  item?.product_url && (
+                    <a
+                      key={idx}
+                      href={ensureAbsoluteUrl(item.product_url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between text-sm hover:bg-black/5 p-2 -mx-2 transition-colors group/link"
+                    >
+                      <span className="text-black/70 group-hover/link:text-black transition-colors truncate pr-2">
+                        {item.name}
+                      </span>
+                      <ExternalLink className="w-3.5 h-3.5 text-black/40 group-hover/link:text-black flex-shrink-0" />
+                    </a>
+                  ),
+              )}
+            </div>
+          </div>
         )}
       </div>
+
+      {!hideActions && (
+        <div className="mt-auto">
+          {isUnlocked ? (
+            <Link
+              href={`/outfit/${outfit.id}`}
+              className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-colors duration-300"
+            >
+              {hasLinksUnlocked ? "View Full Details" : "View Collection"}
+            </Link>
+          ) : (
+            <button
+              onClick={() => onUnlock && onUnlock(outfit.id)}
+              className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-all duration-300 border-t border-white/10"
+            >
+              <span className="flex items-center justify-center gap-2">
+                <Lock className="w-3.5 h-3.5" /> Unlock Collection (1 Credit)
+              </span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

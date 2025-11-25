@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
 import { useState, useEffect } from "react"
 import { supabaseAuth } from "@/lib/supabase-auth-client"
-import { Menu, X, ChevronDown, User, LogOut } from "lucide-react"
+import { Menu, X, ChevronDown, User, LogOut, Coins } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 
 export function Header() {
@@ -75,10 +75,13 @@ export function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-6 ml-auto md:ml-0">
-          {user && credits > 0 && (
-            <div className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          {user && (
+            <Link
+              href="/credits"
+              className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-accent transition-colors"
+            >
               <span className="text-accent">{credits}</span> Credits
-            </div>
+            </Link>
           )}
 
           {user ? (
@@ -100,6 +103,14 @@ export function Header() {
                   >
                     <User className="w-4 h-4" />
                     Profile
+                  </Link>
+                  <Link
+                    href="/credits"
+                    className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-accent/10 transition-colors"
+                    onClick={() => setProfileMenuOpen(false)}
+                  >
+                    <Coins className="w-4 h-4" />
+                    Buy Credits
                   </Link>
                   <button
                     onClick={() => {
@@ -123,7 +134,7 @@ export function Header() {
             </Link>
           )}
 
-          {/* <Link href="/cart" className="relative group p-2">
+          <Link href="/cart" className="relative group p-2">
             <svg
               className="w-5 h-5 text-foreground transition-transform group-hover:scale-110"
               fill="none"
@@ -142,7 +153,7 @@ export function Header() {
                 {totalItems}
               </span>
             )}
-          </Link> */}
+          </Link>
 
           <button className="md:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -168,10 +179,14 @@ export function Header() {
               Collections
             </Link>
 
-            {user && credits > 0 && (
-              <div className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            {user && (
+              <Link
+                href="/credits"
+                className="text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-accent transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Credits: <span className="text-accent">{credits}</span>
-              </div>
+              </Link>
             )}
 
             {user ? (
@@ -182,6 +197,13 @@ export function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Profile
+                </Link>
+                <Link
+                  href="/credits"
+                  className="text-sm font-bold uppercase tracking-wider hover:text-accent transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Buy Credits
                 </Link>
                 <button
                   onClick={() => {
