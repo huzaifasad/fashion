@@ -2,13 +2,13 @@ import { callOpenAI } from "@/lib/openai"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
-  console.log("[v0] Quality Checker: Starting quality validation")
+  console.log(" Quality Checker: Starting quality validation")
 
   try {
     const { outfits, profile } = await request.json()
 
-    console.log("[v0] Quality Checker: Outfits to validate:", outfits?.length)
-    console.log("[v0] Quality Checker: Profile received")
+    console.log(" Quality Checker: Outfits to validate:", outfits?.length)
+    console.log(" Quality Checker: Profile received")
 
     const batchSize = 3
     const batches = []
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       batches.push(outfits.slice(i, i + batchSize))
     }
 
-    console.log(`[v0] Quality Checker: Split into ${batches.length} batches for parallel processing`)
+    console.log(` Quality Checker: Split into ${batches.length} batches for parallel processing`)
 
     // Process batches in parallel
     const batchResults = await Promise.all(
@@ -80,7 +80,7 @@ Return ONLY valid JSON:
   ]
 }`
 
-        console.log(`[v0] Quality Checker: Calling OpenAI for batch ${batchIndex + 1}...`)
+        console.log(` Quality Checker: Calling OpenAI for batch ${batchIndex + 1}...`)
         const response = await callOpenAI({
           model: "gpt-4o",
           messages: [{ role: "user", content: prompt }],
@@ -95,13 +95,13 @@ Return ONLY valid JSON:
 
     // Combine results from all batches
     const allValidatedOutfits = batchResults.flat()
-    console.log(`[v0] Quality Checker: Collected ${allValidatedOutfits.length} validated results`)
+    console.log(` Quality Checker: Collected ${allValidatedOutfits.length} validated results`)
 
     const scoredOutfits = outfits.map((outfit: any, index: number) => {
       const validationData = allValidatedOutfits.find((v: any) => v.originalIndex === index)
 
       if (validationData) {
-        console.log("[v0] Quality Checker: Outfit", index, "scored:", validationData.overallScore)
+        console.log(" Quality Checker: Outfit", index, "scored:", validationData.overallScore)
         return {
           ...outfit,
           qualityScore: validationData.overallScore,
@@ -123,7 +123,7 @@ Return ONLY valid JSON:
     const totalScore = scoredOutfits.reduce((sum: number, o: any) => sum + (o.qualityScore || 0), 0)
     const averageScore = Math.round(totalScore / scoredOutfits.length)
 
-    console.log("[v0] Quality Checker: All 9 outfits scored and returned")
+    console.log(" Quality Checker: All 9 outfits scored and returned")
 
     return NextResponse.json({
       success: true,
@@ -135,8 +135,8 @@ Return ONLY valid JSON:
       },
     })
   } catch (error: any) {
-    console.error("[v0] Quality Checker: Error occurred:", error)
-    console.error("[v0] Quality Checker: Error stack:", error.stack)
+    console.error(" Quality Checker: Error occurred:", error)
+    console.error(" Quality Checker: Error stack:", error.stack)
     return NextResponse.json({ error: "Quality check failed", details: error.message }, { status: 500 })
   }
 }

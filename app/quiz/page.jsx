@@ -79,7 +79,7 @@ export default function QuizPage() {
         storage.saveQuizId(data.id)
         storage.saveStyledProfile(styledProfile)
       } catch (error) {
-        console.error("[v0] Error saving quick quiz:", error)
+        console.error(" Error saving quick quiz:", error)
       }
     }
 

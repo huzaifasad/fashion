@@ -1,29 +1,29 @@
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
-  console.log("[v0] Image Analysis: Starting image analysis")
+  console.log(" Image Analysis: Starting image analysis")
 
   try {
     const formData = await request.formData()
     const imageFile = formData.get("image")
 
-    console.log("[v0] Image Analysis: Image file received:", !!imageFile)
+    console.log(" Image Analysis: Image file received:", !!imageFile)
 
     if (!imageFile) {
-      console.error("[v0] Image Analysis: No image provided")
+      console.error(" Image Analysis: No image provided")
       return NextResponse.json({ error: "No image provided" }, { status: 400 })
     }
 
-    console.log("[v0] Image Analysis: Image type:", (imageFile as File).type)
-    console.log("[v0] Image Analysis: Image size:", (imageFile as File).size, "bytes")
+    console.log(" Image Analysis: Image type:", (imageFile as File).type)
+    console.log(" Image Analysis: Image size:", (imageFile as File).size, "bytes")
 
     // Convert file to base64
-    console.log("[v0] Image Analysis: Converting image to base64...")
+    console.log(" Image Analysis: Converting image to base64...")
     const bytes = await (imageFile as File).arrayBuffer()
     const buffer = Buffer.from(bytes)
     const base64Image = `data:${(imageFile as File).type};base64,${buffer.toString("base64")}`
 
-    console.log("[v0] Image Analysis: Base64 conversion complete, length:", base64Image.length)
+    console.log(" Image Analysis: Base64 conversion complete, length:", base64Image.length)
 
     const prompt = `You are a professional fashion stylist analyzing body proportions.
 
@@ -66,7 +66,7 @@ Return ONLY valid JSON:
   "overallConfidence": 75
 }`
 
-    console.log("[v0] Image Analysis: Sending request to OpenAI Vision API...")
+    console.log(" Image Analysis: Sending request to OpenAI Vision API...")
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -90,28 +90,28 @@ Return ONLY valid JSON:
       }),
     })
 
-    console.log("[v0] Image Analysis: OpenAI response status:", response.status)
+    console.log(" Image Analysis: OpenAI response status:", response.status)
 
     if (!response.ok) {
       const error = await response.json()
-      console.error("[v0] Image Analysis: OpenAI error:", JSON.stringify(error, null, 2))
+      console.error(" Image Analysis: OpenAI error:", JSON.stringify(error, null, 2))
       throw new Error(error.error?.message || "OpenAI API error")
     }
 
     const data = await response.json()
-    console.log("[v0] Image Analysis: OpenAI response received")
-    console.log("[v0] Image Analysis: Usage:", JSON.stringify(data.usage, null, 2))
+    console.log(" Image Analysis: OpenAI response received")
+    console.log(" Image Analysis: Usage:", JSON.stringify(data.usage, null, 2))
 
     const analysis = JSON.parse(data.choices[0].message.content)
-    console.log("[v0] Image Analysis: Analysis result:", JSON.stringify(analysis, null, 2))
+    console.log(" Image Analysis: Analysis result:", JSON.stringify(analysis, null, 2))
 
     return NextResponse.json({
       success: true,
       analysis,
     })
   } catch (error: any) {
-    console.error("[v0] Image Analysis: Error occurred:", error)
-    console.error("[v0] Image Analysis: Error stack:", error.stack)
+    console.error(" Image Analysis: Error occurred:", error)
+    console.error(" Image Analysis: Error stack:", error.stack)
     return NextResponse.json({ error: "Image analysis failed", details: error.message }, { status: 500 })
   }
 }

@@ -140,7 +140,7 @@ export function OutfitDetails({ id }) {
   const handlePurchaseLinks = async () => {
     if (isPurchasing) return
 
-    console.log("[v0] Links Unlock: Starting $5 payment flow for outfit:", id)
+    console.log(" Links Unlock: Starting $5 payment flow for outfit:", id)
 
     if (!user) {
       toast({
@@ -168,12 +168,12 @@ export function OutfitDetails({ id }) {
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error("[v0] Links Unlock: Server responded with:", errorText)
+        console.error(" Links Unlock: Server responded with:", errorText)
         throw new Error("Failed to create checkout session")
       }
 
       const data = await response.json()
-      console.log("[v0] Links Unlock: Payment response:", data)
+      console.log(" Links Unlock: Payment response:", data)
 
       if (data.url) {
         window.location.href = data.url
@@ -181,7 +181,7 @@ export function OutfitDetails({ id }) {
         throw new Error("Failed to create checkout session")
       }
     } catch (error) {
-      console.error("[v0] Links Unlock: Payment error:", error)
+      console.error(" Links Unlock: Payment error:", error)
       toast({
         title: "Payment Failed",
         description: "Unable to process payment. Please try again.",
@@ -226,7 +226,7 @@ export function OutfitDetails({ id }) {
 
   useEffect(() => {
     const loadOutfit = async () => {
-      console.log("[v0] Outfit Details: Loading outfit with ID:", id)
+      console.log(" Outfit Details: Loading outfit with ID:", id)
 
       if (user) {
         const { data, error } = await supabaseAuth
@@ -237,12 +237,12 @@ export function OutfitDetails({ id }) {
           .single()
 
         if (error) {
-          console.error("[v0] Error fetching outfit from database:", error)
+          console.error(" Error fetching outfit from database:", error)
           setOutfit(null)
         } else {
-          console.log("[v0] Outfit Details: Found outfit in database:", data)
+          console.log(" Outfit Details: Found outfit in database:", data)
           console.log(
-            "[v0] Outfit Details: links_unlocked value:",
+            " Outfit Details: links_unlocked value:",
             data.links_unlocked,
             "Type:",
             typeof data.links_unlocked,
@@ -274,7 +274,7 @@ export function OutfitDetails({ id }) {
           }
         }
       } else {
-        console.log("[v0] No user logged in, outfit details require authentication")
+        console.log(" No user logged in, outfit details require authentication")
         setOutfit(null)
       }
 
@@ -536,7 +536,7 @@ export function OutfitDetails({ id }) {
                 const images = item.images || [item.image]
                 const hasMultipleImages = images.length > 1
                 const productUrl = ensureAbsoluteUrl(item.product_url || item.url)
-                console.log("[v0] Outfit Details: Item URL for", item.name, ":", productUrl)
+                console.log(" Outfit Details: Item URL for", item.name, ":", productUrl)
 
                 return (
                   <div

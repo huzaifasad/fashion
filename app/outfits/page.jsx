@@ -514,15 +514,15 @@ function OutfitsContent() {
     const loadData = async () => {
       if (authLoading) return
 
-      console.log("[v0] Loading outfits data...")
-      console.log("[v0] User:", user)
-      console.log("[v0] User ID:", user?.id)
+      console.log(" Loading outfits data...")
+      console.log(" User:", user)
+      console.log(" User ID:", user?.id)
 
       let userOutfits = []
       const storedCandidates = storage.getCandidates()
 
       if (user) {
-        console.log("[v0] Fetching outfits from Supabase for user:", user.id)
+        console.log(" Fetching outfits from Supabase for user:", user.id)
 
         const { data, error } = await supabaseAuth
           .from("generated_outfits")
@@ -530,12 +530,12 @@ function OutfitsContent() {
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
 
-        console.log("[v0] Supabase response - data:", data)
-        console.log("[v0] Supabase response - error:", error)
-        console.log("[v0] Number of outfits fetched:", data?.length || 0)
+        console.log(" Supabase response - data:", data)
+        console.log(" Supabase response - error:", error)
+        console.log(" Number of outfits fetched:", data?.length || 0)
 
         if (error) {
-          console.error("[v0] Error fetching outfits:", error)
+          console.error(" Error fetching outfits:", error)
           toast({
             title: "Error Loading Outfits",
             description: error.message || "Could not load your collection",
@@ -546,25 +546,25 @@ function OutfitsContent() {
         if (!error && data) {
           userOutfits = data
           console.log(
-            "[v0] Raw outfit data with links_unlocked:",
+            " Raw outfit data with links_unlocked:",
             data.map((o) => ({ id: o.id, links_unlocked: o.links_unlocked })),
           )
 
           const unlockedIds = data.filter((o) => o.is_unlocked).map((o) => o.id)
           const linksUnlockedIds = data.filter((o) => o.links_unlocked === true).map((o) => o.id)
 
-          console.log("[v0] Unlocked outfit IDs:", unlockedIds)
-          console.log("[v0] Links unlocked outfit IDs:", linksUnlockedIds)
-          console.log("[v0] Total outfits with links unlocked:", linksUnlockedIds.length)
+          console.log(" Unlocked outfit IDs:", unlockedIds)
+          console.log(" Links unlocked outfit IDs:", linksUnlockedIds)
+          console.log(" Total outfits with links unlocked:", linksUnlockedIds.length)
 
           setUnlockedOutfits(unlockedIds)
           setLinksUnlockedOutfits(linksUnlockedIds)
         }
       } else {
-        console.log("[v0] No user session - guests cannot see outfits")
+        console.log(" No user session - guests cannot see outfits")
       }
 
-      console.log("[v0] Setting outfits state with:", userOutfits)
+      console.log(" Setting outfits state with:", userOutfits)
       setOutfits(userOutfits || [])
 
       if (mode === "selection" && storedCandidates && storedCandidates.length > 0) {
@@ -596,7 +596,7 @@ function OutfitsContent() {
       }))
 
       const { error } = await supabaseAuth.from("generated_outfits").insert(newOutfits)
-      if (error) console.error("[v0] Error saving outfits to DB:", error)
+      if (error) console.error(" Error saving outfits to DB:", error)
 
       // Refresh list
       const { data } = await supabaseAuth
@@ -625,7 +625,7 @@ function OutfitsContent() {
   }
 
   const handleUnlock = async (outfitId) => {
-    console.log("[v0] Unlock: Starting unlock flow for outfit:", outfitId)
+    console.log(" Unlock: Starting unlock flow for outfit:", outfitId)
 
     if (!user) {
       toast({
@@ -639,7 +639,7 @@ function OutfitsContent() {
 
     const { data: profile } = await supabaseAuth.from("profiles").select("credits").eq("id", user.id).single()
 
-    console.log("[v0] Unlock: User credits:", profile?.credits)
+    console.log(" Unlock: User credits:", profile?.credits)
 
     if (!profile || profile.credits <= 0) {
       toast({
@@ -657,7 +657,7 @@ function OutfitsContent() {
       .eq("id", user.id)
 
     if (deductError) {
-      console.error("[v0] Error deducting credit:", deductError)
+      console.error(" Error deducting credit:", deductError)
       toast({
         variant: "destructive",
         title: "Error",
@@ -666,7 +666,7 @@ function OutfitsContent() {
       return
     }
 
-    console.log("[v0] Unlock: Credit deducted successfully")
+    console.log(" Unlock: Credit deducted successfully")
 
     const { error: unlockError } = await supabaseAuth
       .from("generated_outfits")
@@ -675,7 +675,7 @@ function OutfitsContent() {
       .eq("user_id", user.id)
 
     if (unlockError) {
-      console.error("[v0] Error unlocking outfit:", unlockError)
+      console.error(" Error unlocking outfit:", unlockError)
       toast({
         variant: "destructive",
         title: "Error",
@@ -684,7 +684,7 @@ function OutfitsContent() {
       return
     }
 
-    console.log("[v0] Unlock: Outfit unlocked in database")
+    console.log(" Unlock: Outfit unlocked in database")
 
     const { data } = await supabaseAuth
       .from("generated_outfits")
@@ -770,7 +770,7 @@ function OutfitsContent() {
     return true
   })
 
-  console.log("[v0] Filtered outfits count:", filteredOutfits.length, "Filter mode:", filter)
+  console.log(" Filtered outfits count:", filteredOutfits.length, "Filter mode:", filter)
 
   if (loading || authLoading) {
     return (

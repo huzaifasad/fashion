@@ -67,37 +67,37 @@ const QUIZ_STEPS = [
         value: "casual",
         label: "Casual",
         description: "Relaxed and comfortable",
-        image: "/casual-fashion-style.png",
+        image: "/casual.jpg",
       },
       {
         value: "formal",
         label: "Formal",
         description: "Professional and polished",
-        image: "/formal-business-attire.jpg",
+        image: "/formal.jpg",
       },
       {
         value: "sporty",
         label: "Sporty",
         description: "Athletic and active",
-        image: "/sporty-athletic-wear.jpg",
+        image: "/sport.jpg",
       },
       {
         value: "elegant",
         label: "Elegant",
         description: "Sophisticated and refined",
-        image: "/elegant-sophisticated-fashion.jpg",
+        image: "/elegants.jpg",
       },
       {
         value: "streetwear",
         label: "Streetwear",
         description: "Urban and trendy",
-        image: "/streetwear-urban-fashion.jpg",
+        image: "/street.jpg",
       },
       {
         value: "bohemian",
         label: "Bohemian",
         description: "Free-spirited and artistic",
-        image: "/bohemian-boho-style.jpg",
+        image: "/Bohemian.jpg",
       },
     ],
   },
@@ -257,7 +257,7 @@ export function QuizFlow({ styledProfile }) {
 
   const saveQuizToDatabase = async () => {
     if (!user) {
-      console.log("[v0] No user logged in, skipping quiz save to DB")
+      console.log(" No user logged in, skipping quiz save to DB")
       return
     }
 
@@ -297,9 +297,9 @@ export function QuizFlow({ styledProfile }) {
       const { data, error } = await supabaseAuth.from("style_quizzes").insert([quizRecord]).select().single()
 
       if (error) {
-        console.error("[v0] Error saving quiz to database:", error)
+        console.error(" Error saving quiz to database:", error)
       } else {
-        console.log("[v0] Quiz saved to database with ID:", data.id)
+        console.log(" Quiz saved to database with ID:", data.id)
         storage.saveQuizId(data.id)
 
         if (styledProfile) {
@@ -307,7 +307,7 @@ export function QuizFlow({ styledProfile }) {
         }
       }
     } catch (error) {
-      console.error("[v0] Error in saveQuizToDatabase:", error)
+      console.error(" Error in saveQuizToDatabase:", error)
     }
   }
 
@@ -368,9 +368,9 @@ export function QuizFlow({ styledProfile }) {
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => handleSelect(option.value)}
               >
-                {option.image && (
-                  <div className="relative w-full h-32 mb-4 overflow-hidden rounded">
-                    <Image src={option.image || "/placeholder.svg"} alt={option.label} fill className="object-cover" />
+                               {option.image && (
+                  <div className="relative w-full h-72 mb-4 overflow-hidden rounded-lg">
+                    <Image src={option.image || "/placeholder.svg"} alt={option.label} fill className="object-cover object-top" />
                   </div>
                 )}
                 <div className="flex items-start gap-4">

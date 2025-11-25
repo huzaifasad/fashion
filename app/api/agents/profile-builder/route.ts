@@ -2,11 +2,11 @@ import { callOpenAI } from "@/lib/openai"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
-  console.log("[v0] Profile Builder: Starting profile building")
+  console.log(" Profile Builder: Starting profile building")
 
   try {
     const quizData = await request.json()
-    console.log("[v0] Profile Builder: Quiz data received:", JSON.stringify(quizData, null, 2))
+    console.log(" Profile Builder: Quiz data received:", JSON.stringify(quizData, null, 2))
 
     // Convert budget to price range
     const budgetMap: Record<string, { min: number; max: number }> = {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     }
     const priceRange = budgetMap[quizData.budget] || { min: 50, max: 200 }
 
-    console.log("[v0] Profile Builder: Price range:", priceRange)
+    console.log(" Profile Builder: Price range:", priceRange)
 
     const prompt = `You are an expert fashion consultant creating a personalized shopping profile.
 
@@ -88,7 +88,7 @@ Return ONLY valid JSON:
   }
 }`
 
-    console.log("[v0] Profile Builder: Calling OpenAI...")
+    console.log(" Profile Builder: Calling OpenAI...")
     const response = await callOpenAI({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
@@ -96,17 +96,17 @@ Return ONLY valid JSON:
       temperature: 0.7,
     })
 
-    console.log("[v0] Profile Builder: OpenAI response received")
+    console.log(" Profile Builder: OpenAI response received")
     const profile = JSON.parse(response)
-    console.log("[v0] Profile Builder: Profile created:", JSON.stringify(profile, null, 2))
+    console.log(" Profile Builder: Profile created:", JSON.stringify(profile, null, 2))
 
     return NextResponse.json({
       success: true,
       profile,
     })
   } catch (error: any) {
-    console.error("[v0] Profile Builder: Error occurred:", error)
-    console.error("[v0] Profile Builder: Error stack:", error.stack)
+    console.error(" Profile Builder: Error occurred:", error)
+    console.error(" Profile Builder: Error stack:", error.stack)
     return NextResponse.json({ error: "Profile building failed", details: error.message }, { status: 500 })
   }
 }

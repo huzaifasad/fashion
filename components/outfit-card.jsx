@@ -263,7 +263,7 @@ export function OutfitCard({ outfit, isUnlocked, hasLinksUnlocked, onUnlock, hid
               href={`/outfit/${outfit.id}`}
               className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-colors duration-300"
             >
-              {hasLinksUnlocked ? "View Full Details" : "View Collection"}
+              {hasLinksUnlocked ? "Watch Your Look" : "View Collection"}
             </Link>
           ) : (
             <button
@@ -271,7 +271,7 @@ export function OutfitCard({ outfit, isUnlocked, hasLinksUnlocked, onUnlock, hid
               className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-all duration-300 border-t border-white/10"
             >
               <span className="flex items-center justify-center gap-2">
-                <Lock className="w-3.5 h-3.5" /> Unlock Collection (1 Credit)
+                <Lock className="w-3.5 h-3.5" /> Buy Your Look (1 Credit)
               </span>
             </button>
           )}

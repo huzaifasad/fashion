@@ -3,17 +3,17 @@ import { NextResponse } from "next/server"
 import { supabaseAuth } from "@/lib/supabase-auth-client"
 
 export async function POST(request: Request) {
-  console.log("[v0] Outfit Picker: Starting outfit generation")
+  console.log(" Outfit Picker: Starting outfit generation")
 
   try {
     const { profile, products, styledProfile } = await request.json()
 
-    console.log("[v0] Outfit Picker: Profile received")
-    console.log("[v0] Outfit Picker: Styled Profile received:", !!styledProfile)
+    console.log(" Outfit Picker: Profile received")
+    console.log(" Outfit Picker: Styled Profile received:", !!styledProfile)
 
     let feedbackHistory = ""
     if (styledProfile && styledProfile.user_id) {
-      console.log("[v0] Outfit Picker: Fetching feedback history for user:", styledProfile.user_id)
+      console.log(" Outfit Picker: Fetching feedback history for user:", styledProfile.user_id)
       const { data: feedbackData } = await supabaseAuth
         .from("generated_outfits")
         .select("name, is_liked, feedback_reason, feedback_text, why_it_works")
@@ -40,12 +40,12 @@ ${likes || "None yet"}
 DISLIKED OUTFITS (Avoid these patterns):
 ${dislikes || "None yet"}
 `
-        console.log("[v0] Outfit Picker: Feedback history found and added")
+        console.log(" Outfit Picker: Feedback history found and added")
       }
     }
 
     console.log(
-      "[v0] Outfit Picker: Products count - Tops:",
+      " Outfit Picker: Products count - Tops:",
       products.tops?.length,
       "Bottoms:",
       products.bottoms?.length,
@@ -53,17 +53,17 @@ ${dislikes || "None yet"}
       products.shoes?.length,
     )
 
-    console.log("[v0] Outfit Picker: === SAMPLE PRODUCTS ===")
+    console.log(" Outfit Picker: === SAMPLE PRODUCTS ===")
     if (products.tops?.[0]) {
-      console.log("[v0] Outfit Picker: Sample TOP:", JSON.stringify(products.tops[0], null, 2))
+      console.log(" Outfit Picker: Sample TOP:", JSON.stringify(products.tops[0], null, 2))
     }
     if (products.bottoms?.[0]) {
-      console.log("[v0] Outfit Picker: Sample BOTTOM:", JSON.stringify(products.bottoms[0], null, 2))
+      console.log(" Outfit Picker: Sample BOTTOM:", JSON.stringify(products.bottoms[0], null, 2))
     }
     if (products.shoes?.[0]) {
-      console.log("[v0] Outfit Picker: Sample SHOE:", JSON.stringify(products.shoes[0], null, 2))
+      console.log(" Outfit Picker: Sample SHOE:", JSON.stringify(products.shoes[0], null, 2))
     }
-    console.log("[v0] Outfit Picker: ========================")
+    console.log(" Outfit Picker: ========================")
 
     // Minimize product data for token efficiency
     const minimizedProducts = {
@@ -91,7 +91,7 @@ ${dislikes || "None yet"}
     }
 
     console.log(
-      "[v0] Outfit Picker: Minimized products - Tops:",
+      " Outfit Picker: Minimized products - Tops:",
       minimizedProducts.tops.length,
       "Bottoms:",
       minimizedProducts.bottoms.length,
@@ -178,7 +178,7 @@ Return ONLY valid JSON with 9 outfits:
 
 CRITICAL: Create exactly 9 diverse outfits using different products! Do not include per-item reasoning, only the overall whyItWorks.`
 
-    console.log("[v0] Outfit Picker: Calling OpenAI for 9 outfit generation...")
+    console.log(" Outfit Picker: Calling OpenAI for 9 outfit generation...")
     const response = await callOpenAI({
       model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
@@ -186,30 +186,30 @@ CRITICAL: Create exactly 9 diverse outfits using different products! Do not incl
       temperature: 0.8,
     })
 
-    console.log("[v0] Outfit Picker: OpenAI response received")
+    console.log(" Outfit Picker: OpenAI response received")
     const outfitData = JSON.parse(response)
-    console.log("[v0] Outfit Picker: Outfits generated:", outfitData.outfits?.length)
+    console.log(" Outfit Picker: Outfits generated:", outfitData.outfits?.length)
 
     // Enrich outfits with full product data
-    console.log("[v0] Outfit Picker: Enriching outfits with full product data...")
+    console.log(" Outfit Picker: Enriching outfits with full product data...")
     const enrichedOutfits = outfitData.outfits
       .map((outfit: any, index: number) => {
-        console.log("[v0] Outfit Picker: Processing outfit", index + 1)
-        console.log("[v0] Outfit Picker: Looking for top ID:", outfit.top?.id)
-        console.log("[v0] Outfit Picker: Looking for bottom ID:", outfit.bottom?.id)
-        console.log("[v0] Outfit Picker: Looking for shoes ID:", outfit.shoes?.id)
+        console.log(" Outfit Picker: Processing outfit", index + 1)
+        console.log(" Outfit Picker: Looking for top ID:", outfit.top?.id)
+        console.log(" Outfit Picker: Looking for bottom ID:", outfit.bottom?.id)
+        console.log(" Outfit Picker: Looking for shoes ID:", outfit.shoes?.id)
 
         const topProduct = products.tops.find((p: any) => p.id === outfit.top?.id)
         const bottomProduct = products.bottoms.find((p: any) => p.id === outfit.bottom?.id)
         const shoesProduct = products.shoes.find((p: any) => p.id === outfit.shoes?.id)
 
-        console.log("[v0] Outfit Picker: Top found:", !!topProduct)
-        console.log("[v0] Outfit Picker: Bottom found:", !!bottomProduct)
-        console.log("[v0] Outfit Picker: Shoes found:", !!shoesProduct)
+        console.log(" Outfit Picker: Top found:", !!topProduct)
+        console.log(" Outfit Picker: Bottom found:", !!bottomProduct)
+        console.log(" Outfit Picker: Shoes found:", !!shoesProduct)
 
         // If any product not found, use fallback
         if (!topProduct || !bottomProduct || !shoesProduct) {
-          console.warn(`[v0] Outfit Picker: Missing product in outfit ${outfit.outfitNumber}, using fallbacks`)
+          console.warn(` Outfit Picker: Missing product in outfit ${outfit.outfitNumber}, using fallbacks`)
           return {
             id: `outfit-${index + 1}`,
             name: outfit.name || `Curated Look ${index + 1}`,
@@ -303,7 +303,7 @@ CRITICAL: Create exactly 9 diverse outfits using different products! Do not incl
         }
 
         console.log(
-          "[v0] Outfit Picker: Outfit enriched with",
+          " Outfit Picker: Outfit enriched with",
           enriched.items.reduce((sum, item) => sum + (item.images?.length || 0), 0),
           "total images",
         )
@@ -311,15 +311,15 @@ CRITICAL: Create exactly 9 diverse outfits using different products! Do not incl
       })
       .filter(Boolean)
 
-    console.log("[v0] Outfit Picker: Total enriched outfits:", enrichedOutfits.length)
+    console.log(" Outfit Picker: Total enriched outfits:", enrichedOutfits.length)
 
     return NextResponse.json({
       success: true,
       outfits: enrichedOutfits,
     })
   } catch (error: any) {
-    console.error("[v0] Outfit Picker: Error occurred:", error)
-    console.error("[v0] Outfit Picker: Error stack:", error.stack)
+    console.error(" Outfit Picker: Error occurred:", error)
+    console.error(" Outfit Picker: Error stack:", error.stack)
     return NextResponse.json({ error: "Outfit generation failed", details: error.message }, { status: 500 })
   }
 }

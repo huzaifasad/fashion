@@ -80,11 +80,11 @@ export default function StyledProfilePage() {
   }, [user, loading, router])
 
   const fetchStyledProfile = async () => {
-    console.log("[v0] Styled Profile: Fetching profile for user:", user.id)
+    console.log(" Styled Profile: Fetching profile for user:", user.id)
     const { data, error } = await supabaseAuth.from("styled_profiles").select("*").eq("user_id", user.id).single()
 
     if (data) {
-      console.log("[v0] Styled Profile: Profile fetched:", data)
+      console.log(" Styled Profile: Profile fetched:", data)
 
       const parseColors = (colorData) => {
         if (!colorData) return []
@@ -108,9 +108,9 @@ export default function StyledProfilePage() {
       })
       setIsEditing(false)
     } else if (error && error.code !== "PGRST116") {
-      console.error("[v0] Styled Profile: Fetch error:", error)
+      console.error(" Styled Profile: Fetch error:", error)
     } else {
-      console.log("[v0] Styled Profile: No profile found, starting in edit mode")
+      console.log(" Styled Profile: No profile found, starting in edit mode")
       setIsEditing(true)
     }
   }
@@ -138,21 +138,21 @@ export default function StyledProfilePage() {
       updated_at: new Date().toISOString(),
     }
 
-    console.log("[v0] Styled Profile: Saving profile:", profileToSave)
+    console.log(" Styled Profile: Saving profile:", profileToSave)
 
     const { error } = await supabaseAuth.from("styled_profiles").upsert(profileToSave, { onConflict: "user_id" })
 
     setSaving(false)
 
     if (error) {
-      console.error("[v0] Styled Profile: Save error:", error)
+      console.error(" Styled Profile: Save error:", error)
       toast({
         title: "Error",
         description: "Failed to save your styled profile: " + error.message,
         variant: "destructive",
       })
     } else {
-      console.log("[v0] Styled Profile: Successfully saved!")
+      console.log(" Styled Profile: Successfully saved!")
       toast({
         title: "Saved!",
         description: "Your styled profile has been updated.",

@@ -31,7 +31,7 @@ export function Header() {
           setCredits(data.credits ?? 0)
         }
       } catch (err) {
-        console.error("[v0] Failed to fetch credits:", err)
+        console.error(" Failed to fetch credits:", err)
       }
     }
 

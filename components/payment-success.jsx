@@ -24,15 +24,15 @@ export function PaymentSuccess() {
     const id = searchParams.get("outfit_id")
     const type = searchParams.get("type") || "outfit_unlock"
 
-    console.log("[v0] Payment Success: Session ID:", sessionId)
-    console.log("[v0] Payment Success: Outfit ID:", id)
-    console.log("[v0] Payment Success: Payment Type:", type)
+    console.log(" Payment Success: Session ID:", sessionId)
+    console.log(" Payment Success: Outfit ID:", id)
+    console.log(" Payment Success: Payment Type:", type)
 
     setOutfitId(id)
     setPaymentType(type)
 
     if (!sessionId) {
-      console.log("[v0] Payment Success: No session ID in URL")
+      console.log(" Payment Success: No session ID in URL")
       setStatus("error")
       return
     }
@@ -42,7 +42,7 @@ export function PaymentSuccess() {
     const alreadyProcessed = sessionStorage.getItem(processedKey)
 
     if (alreadyProcessed) {
-      console.log("[v0] Payment Success: Session already processed, showing cached result")
+      console.log(" Payment Success: Session already processed, showing cached result")
       const cachedResult = JSON.parse(alreadyProcessed)
       setStatus(cachedResult.status)
       setCreditsResult(cachedResult.creditsResult)
@@ -69,7 +69,7 @@ export function PaymentSuccess() {
           .single()
 
         if (data && !error) {
-          console.log("[v0] Fetched outfit data:", data)
+          console.log(" Fetched outfit data:", data)
           setPurchasedOutfit(data)
         }
       }
@@ -80,7 +80,7 @@ export function PaymentSuccess() {
 
   const verifyCredits = async (sessionId, processedKey) => {
     try {
-      console.log("[v0] Payment Success: Verifying credits purchase...")
+      console.log(" Payment Success: Verifying credits purchase...")
 
       const response = await fetch("/api/payment/verify-credits", {
         method: "POST",
@@ -91,7 +91,7 @@ export function PaymentSuccess() {
       const result = await response.json()
 
       if (result.success) {
-        console.log("[v0] Payment Success: Credits added!", result)
+        console.log(" Payment Success: Credits added!", result)
         setCreditsResult(result)
         setStatus("success")
 
@@ -104,18 +104,18 @@ export function PaymentSuccess() {
           })
         )
       } else {
-        console.error("[v0] Payment Success: Credits verification failed:", result.error)
+        console.error(" Payment Success: Credits verification failed:", result.error)
         setStatus("error")
       }
     } catch (error) {
-      console.error("[v0] Payment Success: Error verifying credits:", error)
+      console.error(" Payment Success: Error verifying credits:", error)
       setStatus("error")
     }
   }
 
   const verifyAndUnlock = async (sessionId, id, type, processedKey) => {
     try {
-      console.log("[v0] Payment Success: Verifying payment session with Stripe...")
+      console.log(" Payment Success: Verifying payment session with Stripe...")
 
       const verifyResponse = await fetch("/api/payment/verify-session", {
         method: "POST",
@@ -126,15 +126,15 @@ export function PaymentSuccess() {
       const verifyResult = await verifyResponse.json()
 
       if (!verifyResult.success) {
-        console.error("[v0] Payment Success: Payment not verified")
+        console.error(" Payment Success: Payment not verified")
         setStatus("error")
         return
       }
 
-      console.log("[v0] Payment Success: Payment verified! Amount:", verifyResult.amountTotal / 100, "USD")
+      console.log(" Payment Success: Payment verified! Amount:", verifyResult.amountTotal / 100, "USD")
 
       if (type === "outfit_unlock" && id) {
-        console.log("[v0] Payment Success: Unlocking outfit:", id)
+        console.log(" Payment Success: Unlocking outfit:", id)
 
         // ✅ Unlock BOTH is_unlocked and links_unlocked
         const { error } = await supabaseAuth
@@ -147,10 +147,10 @@ export function PaymentSuccess() {
           .eq("user_id", user.id)
 
         if (error) {
-          console.error("[v0] Payment Success: Error updating unlock status:", error)
+          console.error(" Payment Success: Error updating unlock status:", error)
           setStatus("error")
         } else {
-          console.log("[v0] Payment Success: Successfully unlocked outfit with shopping links")
+          console.log(" Payment Success: Successfully unlocked outfit with shopping links")
           setStatus("success")
 
           sessionStorage.setItem(
@@ -165,7 +165,7 @@ export function PaymentSuccess() {
         setStatus("success")
       }
     } catch (error) {
-      console.error("[v0] Payment Success: Error during verification:", error)
+      console.error(" Payment Success: Error during verification:", error)
       setStatus("error")
     }
   }
