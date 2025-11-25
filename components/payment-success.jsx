@@ -1,14 +1,14 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { CheckCircle2, ArrowRight, AlertCircle, Loader2, Coins } from "lucide-react"
+import { CheckCircle2, ArrowRight, AlertCircle, Loader2, Coins, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { supabaseAuth } from "@/lib/supabase-auth-client"
 import { useAuth } from "@/components/auth-provider"
-import { OutfitCard } from "@/components/outfit-card"
+import Image from "next/image"
 
 export function PaymentSuccess() {
   const searchParams = useSearchParams()
@@ -37,7 +37,7 @@ export function PaymentSuccess() {
       return
     }
 
-    // ✅ SOLUTION: Check if this session was already processed
+    // ✅ Check if this session was already processed
     const processedKey = `payment_processed_${sessionId}`
     const alreadyProcessed = sessionStorage.getItem(processedKey)
 
@@ -69,6 +69,7 @@ export function PaymentSuccess() {
           .single()
 
         if (data && !error) {
+          console.log("[v0] Fetched outfit data:", data)
           setPurchasedOutfit(data)
         }
       }
@@ -94,7 +95,6 @@ export function PaymentSuccess() {
         setCreditsResult(result)
         setStatus("success")
 
-        // ✅ Mark this session as processed
         sessionStorage.setItem(
           processedKey,
           JSON.stringify({
@@ -136,9 +136,13 @@ export function PaymentSuccess() {
       if (type === "outfit_unlock" && id) {
         console.log("[v0] Payment Success: Unlocking outfit:", id)
 
+        // ✅ Unlock BOTH is_unlocked and links_unlocked
         const { error } = await supabaseAuth
           .from("generated_outfits")
-          .update({ is_unlocked: true })
+          .update({ 
+            is_unlocked: true,
+            links_unlocked: true  // ← This enables shopping links!
+          })
           .eq("id", id)
           .eq("user_id", user.id)
 
@@ -146,10 +150,9 @@ export function PaymentSuccess() {
           console.error("[v0] Payment Success: Error updating unlock status:", error)
           setStatus("error")
         } else {
-          console.log("[v0] Payment Success: Successfully unlocked outfit")
+          console.log("[v0] Payment Success: Successfully unlocked outfit with shopping links")
           setStatus("success")
 
-          // ✅ Mark this session as processed
           sessionStorage.setItem(
             processedKey,
             JSON.stringify({
@@ -167,9 +170,32 @@ export function PaymentSuccess() {
     }
   }
 
+  // Helper function to get item image
+  const getItemImage = (item) => {
+    if (!item) return "/placeholder.svg"
+    
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+      return item.images[0]
+    }
+    
+    if (typeof item.image === "string") {
+      if (item.image.startsWith("[")) {
+        try {
+          const parsed = JSON.parse(item.image)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return typeof parsed[0] === "string" ? parsed[0] : parsed[0].url
+          }
+        } catch (e) {}
+      }
+      return item.image
+    }
+    
+    return "/placeholder.svg"
+  }
+
   if (status === "processing") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background">
         <div className="text-center space-y-6 max-w-md w-full">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -192,7 +218,7 @@ export function PaymentSuccess() {
 
   if (status === "error") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background">
         <div className="text-center space-y-6 max-w-md w-full">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -208,7 +234,7 @@ export function PaymentSuccess() {
               We couldn't verify your payment. Please contact support if you were charged.
             </p>
           </div>
-          <Button asChild variant="outline" size="lg" className="w-full bg-transparent">
+          <Button asChild variant="outline" size="lg" className="w-full">
             <Link href="/outfits">Return to Outfits</Link>
           </Button>
         </div>
@@ -217,8 +243,9 @@ export function PaymentSuccess() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="text-center space-y-8 max-w-2xl w-full">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background">
+      <div className="text-center space-y-8 max-w-4xl w-full py-8">
+        {/* Success Icon */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -228,21 +255,23 @@ export function PaymentSuccess() {
           <CheckCircle2 className="w-10 h-10" />
         </motion.div>
 
+        {/* Title */}
         <div className="space-y-3">
-          <h1 className="text-2xl md:text-4xl font-serif font-medium">Payment Successful!</h1>
+          <h1 className="text-3xl md:text-5xl font-serif font-medium">Payment Successful!</h1>
           <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
             {paymentType === "credits"
               ? "Your credits have been added to your account!"
-              : "Your shopping links have been unlocked! You can now access all product links for your selected outfit."}
+              : "Your shopping links have been unlocked! You can now access all product links."}
           </p>
         </div>
 
+        {/* Credits Result */}
         {paymentType === "credits" && creditsResult && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="py-8 space-y-6 bg-accent/5 rounded-2xl border border-border px-6"
+            className="py-8 space-y-6 bg-accent/5 rounded-2xl border border-border px-6 max-w-md mx-auto"
           >
             <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto">
               <Coins className="w-8 h-8" />
@@ -260,32 +289,90 @@ export function PaymentSuccess() {
           </motion.div>
         )}
 
-        {purchasedOutfit && (
+        {/* Outfit with Shopping Links */}
+        {purchasedOutfit && paymentType === "outfit_unlock" && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mt-8 mb-8"
+            className="mt-8 space-y-6"
           >
-            <p className="text-xs md:text-sm text-muted-foreground mb-6 text-center uppercase tracking-widest font-bold">
-              Unlocked Outfit
-            </p>
-            <div className="max-w-sm mx-auto">
-              <OutfitCard outfit={purchasedOutfit} isUnlocked={true} hideActions={true} />
+            <div className="space-y-2">
+              <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-widest font-bold">
+                Your Unlocked Outfit
+              </p>
+              <h2 className="text-2xl md:text-3xl font-serif">{purchasedOutfit.name || "Curated Look"}</h2>
+              <p className="text-3xl md:text-4xl font-serif text-foreground/80">
+                ${purchasedOutfit.total_price?.toFixed(0) || "0"}
+              </p>
+            </div>
+
+            {/* Shopping Links Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {purchasedOutfit.items && purchasedOutfit.items.map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + idx * 0.1 }}
+                  className="group relative bg-card border border-border rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300"
+                >
+                  {/* Item Image */}
+                  <div className="relative aspect-[3/4] bg-muted overflow-hidden">
+                    <Image
+                      src={getItemImage(item)}
+                      alt={item.name || "Product"}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+
+                  {/* Item Info */}
+                  <div className="p-4 space-y-3">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium line-clamp-2 leading-snug">
+                        {item.name || "Fashion Item"}
+                      </p>
+                      <p className="text-lg font-serif">${item.price?.toFixed(0) || "0"}</p>
+                    </div>
+
+                    {/* Shop Now Button */}
+                    {item.url && (
+                      <Button
+                        asChild
+                        className="w-full group/btn"
+                        size="sm"
+                      >
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2"
+                        >
+                          Shop Now
+                          <ExternalLink className="w-3 h-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}
 
+        {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5 }}
           className="pt-8 space-y-3 max-w-md mx-auto"
         >
           {outfitId && paymentType === "outfit_unlock" && (
             <Button asChild size="lg" className="w-full">
               <Link href={`/outfit/${outfitId}`}>
-                View My Outfit <ArrowRight className="ml-2 w-4 h-4" />
+                View Full Outfit Details <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </Button>
           )}

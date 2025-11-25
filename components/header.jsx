@@ -134,26 +134,7 @@ export function Header() {
             </Link>
           )}
 
-          <Link href="/cart" className="relative group p-2">
-            <svg
-              className="w-5 h-5 text-foreground transition-transform group-hover:scale-110"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                strokeWidth={1.5}
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-            {totalItems > 0 && (
-              <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
-                {totalItems}
-              </span>
-            )}
-          </Link>
+        
 
           <button className="md:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
