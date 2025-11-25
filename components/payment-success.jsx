@@ -23,32 +23,50 @@ export function PaymentSuccess() {
     const sessionId = searchParams.get("session_id")
     const id = searchParams.get("outfit_id")
     const type = searchParams.get("type") || "outfit_unlock"
-    const credits = searchParams.get("credits")
 
     console.log("[v0] Payment Success: Session ID:", sessionId)
     console.log("[v0] Payment Success: Outfit ID:", id)
     console.log("[v0] Payment Success: Payment Type:", type)
-    console.log("[v0] Payment Success: Credits:", credits)
 
     setOutfitId(id)
     setPaymentType(type)
 
-    if (sessionId && user) {
-      if (type === "credits") {
-        verifyCredits(sessionId)
-      } else {
-        verifyAndUnlock(sessionId, id, type)
-      }
-    } else if (!sessionId) {
+    if (!sessionId) {
       console.log("[v0] Payment Success: No session ID in URL")
       setStatus("error")
+      return
+    }
+
+    // ✅ SOLUTION: Check if this session was already processed
+    const processedKey = `payment_processed_${sessionId}`
+    const alreadyProcessed = sessionStorage.getItem(processedKey)
+
+    if (alreadyProcessed) {
+      console.log("[v0] Payment Success: Session already processed, showing cached result")
+      const cachedResult = JSON.parse(alreadyProcessed)
+      setStatus(cachedResult.status)
+      setCreditsResult(cachedResult.creditsResult)
+      return
+    }
+
+    // Process payment only if not already done
+    if (user) {
+      if (type === "credits") {
+        verifyCredits(sessionId, processedKey)
+      } else {
+        verifyAndUnlock(sessionId, id, type, processedKey)
+      }
     }
   }, [searchParams, user])
 
   useEffect(() => {
     const fetchOutfit = async () => {
       if (status === "success" && outfitId && user) {
-        const { data, error } = await supabaseAuth.from("generated_outfits").select("*").eq("id", outfitId).single()
+        const { data, error } = await supabaseAuth
+          .from("generated_outfits")
+          .select("*")
+          .eq("id", outfitId)
+          .single()
 
         if (data && !error) {
           setPurchasedOutfit(data)
@@ -59,7 +77,7 @@ export function PaymentSuccess() {
     fetchOutfit()
   }, [status, outfitId, user])
 
-  const verifyCredits = async (sessionId) => {
+  const verifyCredits = async (sessionId, processedKey) => {
     try {
       console.log("[v0] Payment Success: Verifying credits purchase...")
 
@@ -75,6 +93,16 @@ export function PaymentSuccess() {
         console.log("[v0] Payment Success: Credits added!", result)
         setCreditsResult(result)
         setStatus("success")
+
+        // ✅ Mark this session as processed
+        sessionStorage.setItem(
+          processedKey,
+          JSON.stringify({
+            status: "success",
+            creditsResult: result,
+            timestamp: Date.now(),
+          })
+        )
       } else {
         console.error("[v0] Payment Success: Credits verification failed:", result.error)
         setStatus("error")
@@ -85,7 +113,7 @@ export function PaymentSuccess() {
     }
   }
 
-  const verifyAndUnlock = async (sessionId, id, type) => {
+  const verifyAndUnlock = async (sessionId, id, type, processedKey) => {
     try {
       console.log("[v0] Payment Success: Verifying payment session with Stripe...")
 
@@ -105,18 +133,7 @@ export function PaymentSuccess() {
 
       console.log("[v0] Payment Success: Payment verified! Amount:", verifyResult.amountTotal / 100, "USD")
 
-      if (type === "credits") {
-        // Add credits to user profile
-        const creditsToAdd = Math.floor(verifyResult.amountTotal / 500) // $5 = 1 credit
-        await supabaseAuth
-          .from("profiles")
-          .update({ credits: supabaseAuth.raw(`credits + ${creditsToAdd}`) })
-          .eq("id", user.id)
-
-        console.log("[v0] Payment Success: Added", creditsToAdd, "credits")
-        setStatus("success")
-      } else if (type === "outfit_unlock" && id) {
-        // Unlock specific outfit
+      if (type === "outfit_unlock" && id) {
         console.log("[v0] Payment Success: Unlocking outfit:", id)
 
         const { error } = await supabaseAuth
@@ -131,6 +148,15 @@ export function PaymentSuccess() {
         } else {
           console.log("[v0] Payment Success: Successfully unlocked outfit")
           setStatus("success")
+
+          // ✅ Mark this session as processed
+          sessionStorage.setItem(
+            processedKey,
+            JSON.stringify({
+              status: "success",
+              timestamp: Date.now(),
+            })
+          )
         }
       } else {
         setStatus("success")
@@ -143,13 +169,22 @@ export function PaymentSuccess() {
 
   if (status === "processing") {
     return (
-      <div className="text-center space-y-6 max-w-md px-4 mx-auto">
-        <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
-          <Loader2 className="w-10 h-10 animate-spin" />
-        </div>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-serif font-medium">Verifying Payment...</h1>
-          <p className="text-muted-foreground">Please wait while we confirm your payment with Stripe.</p>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center space-y-6 max-w-md w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent"
+          >
+            <Loader2 className="w-10 h-10 animate-spin" />
+          </motion.div>
+          <div className="space-y-2">
+            <h1 className="text-2xl md:text-3xl font-serif font-medium">Verifying Payment...</h1>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Please wait while we confirm your payment with Stripe.
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -157,93 +192,114 @@ export function PaymentSuccess() {
 
   if (status === "error") {
     return (
-      <div className="text-center space-y-6 max-w-md px-4 mx-auto">
-        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto text-red-500">
-          <AlertCircle className="w-10 h-10" />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center space-y-6 max-w-md w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto text-red-500"
+          >
+            <AlertCircle className="w-10 h-10" />
+          </motion.div>
+          <div className="space-y-2">
+            <h1 className="text-2xl md:text-3xl font-serif font-medium">Payment Verification Failed</h1>
+            <p className="text-sm md:text-base text-muted-foreground">
+              We couldn't verify your payment. Please contact support if you were charged.
+            </p>
+          </div>
+          <Button asChild variant="outline" size="lg" className="w-full bg-transparent">
+            <Link href="/outfits">Return to Outfits</Link>
+          </Button>
         </div>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-serif font-medium">Payment Verification Failed</h1>
-          <p className="text-muted-foreground">
-            We couldn't verify your payment. Please contact support if you were charged.
-          </p>
-        </div>
-        <Button asChild variant="outline" size="lg" className="w-full bg-transparent">
-          <Link href="/outfits">Return to Outfits</Link>
-        </Button>
       </div>
     )
   }
 
   return (
-    <div className="text-center space-y-6 max-w-md px-4 mx-auto">
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", duration: 0.6 }}
-        className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto text-green-500"
-      >
-        <CheckCircle2 className="w-10 h-10" />
-      </motion.div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center space-y-8 max-w-2xl w-full">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", duration: 0.6 }}
+          className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto text-green-500"
+        >
+          <CheckCircle2 className="w-10 h-10" />
+        </motion.div>
 
-      <div className="space-y-2">
-        <h1 className="text-3xl font-serif font-medium">Payment Successful</h1>
-        <p className="text-muted-foreground">
-          {paymentType === "credits"
-            ? "Your credits have been added to your account!"
-            : "Your shopping links have been unlocked! You can now access all product links for your selected outfit."}
-        </p>
-      </div>
-
-      {paymentType === "credits" && creditsResult && (
-        <div className="py-8 space-y-4">
-          <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto">
-            <Coins className="w-8 h-8" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-4xl font-serif">+{creditsResult.creditsAdded}</p>
-            <p className="text-sm text-muted-foreground uppercase tracking-wider">Credits Added</p>
-          </div>
-          <div className="pt-4 border-t border-border">
-            <p className="text-sm text-muted-foreground">New Balance</p>
-            <p className="text-2xl font-serif">{creditsResult.newBalance} credits</p>
-          </div>
-        </div>
-      )}
-
-      {purchasedOutfit && (
-        <div className="mt-8 mb-8 text-left">
-          <p className="text-sm text-muted-foreground mb-4 text-center uppercase tracking-widest font-bold">
-            Unlocked Outfit
+        <div className="space-y-3">
+          <h1 className="text-2xl md:text-4xl font-serif font-medium">Payment Successful!</h1>
+          <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
+            {paymentType === "credits"
+              ? "Your credits have been added to your account!"
+              : "Your shopping links have been unlocked! You can now access all product links for your selected outfit."}
           </p>
-          <div className="transform scale-90 origin-top">
-            <OutfitCard
-              outfit={purchasedOutfit}
-              isUnlocked={true}
-              hasLinksUnlocked={true}
-              hideActions={true} // Optional: hide unlock buttons since it's just a preview
-            />
-          </div>
         </div>
-      )}
 
-      <div className="pt-8 space-y-3">
-        {outfitId && paymentType === "outfit_unlock" && (
-          <Button asChild size="lg" className="w-full">
-            <Link href={`/outfit/${outfitId}`}>
-              View My Outfit <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
-          </Button>
+        {paymentType === "credits" && creditsResult && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="py-8 space-y-6 bg-accent/5 rounded-2xl border border-border px-6"
+          >
+            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto">
+              <Coins className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-4xl md:text-5xl font-serif">+{creditsResult.creditsAdded}</p>
+              <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider font-medium">
+                Credits Added
+              </p>
+            </div>
+            <div className="pt-4 border-t border-border space-y-1">
+              <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider">New Balance</p>
+              <p className="text-2xl md:text-3xl font-serif">{creditsResult.newBalance} credits</p>
+            </div>
+          </motion.div>
         )}
-        {paymentType === "credits" && (
-          <Button asChild size="lg" className="w-full">
-            <Link href="/generate">
-              Generate New Outfit <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
-          </Button>
+
+        {purchasedOutfit && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 mb-8"
+          >
+            <p className="text-xs md:text-sm text-muted-foreground mb-6 text-center uppercase tracking-widest font-bold">
+              Unlocked Outfit
+            </p>
+            <div className="max-w-sm mx-auto">
+              <OutfitCard outfit={purchasedOutfit} isUnlocked={true} hideActions={true} />
+            </div>
+          </motion.div>
         )}
-        <Button asChild variant="outline" size="lg" className="w-full bg-transparent">
-          <Link href="/outfits">Browse All Outfits</Link>
-        </Button>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="pt-8 space-y-3 max-w-md mx-auto"
+        >
+          {outfitId && paymentType === "outfit_unlock" && (
+            <Button asChild size="lg" className="w-full">
+              <Link href={`/outfit/${outfitId}`}>
+                View My Outfit <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+            </Button>
+          )}
+          {paymentType === "credits" && (
+            <Button asChild size="lg" className="w-full">
+              <Link href="/generate">
+                Generate New Outfit <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+            </Button>
+          )}
+          <Button asChild variant="outline" size="lg" className="w-full">
+            <Link href="/outfits">Browse All Outfits</Link>
+          </Button>
+        </motion.div>
       </div>
     </div>
   )
