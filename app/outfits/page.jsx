@@ -815,16 +815,12 @@ function OutfitsContent() {
           animate="show"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
-          {filteredOutfits.map((outfit) => (
-            <motion.div
-              key={outfit.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+          {filteredOutfits.map((outfit, index) => (
+            <motion.div key={outfit.id} variants={itemVariants}>
               <OutfitCard
                 outfit={outfit}
                 isUnlocked={unlockedOutfits.includes(outfit.id) || linksUnlockedOutfits.includes(outfit.id)}
+                hasLinksUnlocked={linksUnlockedOutfits.includes(outfit.id)}
                 onUnlock={handleUnlock}
               />
             </motion.div>
