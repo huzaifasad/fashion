@@ -77,9 +77,9 @@ function ProductDetailModal({ item, isOpen, onClose }) {
         <div className="p-6 space-y-4">
           <h3 className="text-2xl font-serif text-foreground">{item.name}</h3>
           <div className="space-y-2 text-muted-foreground">
-            <p>
+            {/* <p>
               <span className="font-medium text-foreground">Brand:</span> {item.brand}
-            </p>
+            </p> */}
             <p>
               <span className="font-medium text-foreground">Price:</span> ${item.price.toFixed(2)}
             </p>
@@ -598,9 +598,9 @@ export function OutfitDetails({ id }) {
                     <div className="flex-1 space-y-2">
                       <h4 className="text-foreground font-medium text-base lg:text-lg">{item.name}</h4>
                       <div className="space-y-1 text-sm text-muted-foreground">
-                        <p>
+                        {/* <p>
                           <span className="font-medium">Brand:</span> {item.brand}
-                        </p>
+                        </p> */}
                         <p>
                           <span className="font-medium">Price:</span> ${item.price.toFixed(2)}
                         </p>
@@ -651,16 +651,20 @@ export function OutfitDetails({ id }) {
                   <Lock className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">Unlock all shopping links for this outfit</p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full border-2 border-black text-black hover:bg-black hover:text-white h-14 uppercase tracking-widest transition-all duration-300 font-medium bg-transparent"
-                  onClick={handlePurchaseLinks}
-                  disabled={isPurchasing}
-                >
-                  <ShoppingBag className="mr-2 w-5 h-5" />
-                  {isPurchasing ? "Processing..." : "Unlock Shopping Links - $5.00"}
-                </Button>
+           <Button
+  variant="outline"
+  size="lg"
+  className={`w-full border-2 border-black text-black hover:bg-black hover:text-white h-14 uppercase tracking-widest transition-all duration-300 font-medium bg-transparent ${
+    !linksUnlocked ? "pulse-cta" : ""
+  }`}
+  onClick={handlePurchaseLinks}
+  disabled={isPurchasing}
+>
+  <ShoppingBag className="mr-2 w-5 h-5" />
+  {isPurchasing ? "Processing..." : "Unlock Shopping Links - $5.00"}
+</Button>
+
+
               </div>
             ) : (
               <div className="p-6 bg-green-500/10 border border-green-500/20 text-green-500 text-center rounded-lg space-y-2">

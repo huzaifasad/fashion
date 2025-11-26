@@ -6,18 +6,23 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState, useEffect } from "react"
 import { storage } from "@/lib/storage"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, User, Sparkles, CreditCard } from "lucide-react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Footer } from "@/components/footer"
+import { useAuth } from "@/components/auth-provider"
+import { supabaseAuth } from "@/lib/supabase-auth-client"
 
 export default function HomePage() {
   const router = useRouter()
+  const { user } = useAuth()
   const [userRequest, setUserRequest] = useState("")
   const [eventType, setEventType] = useState("")
   const [budget, setBudget] = useState("")
   const [moodFilter, setMoodFilter] = useState("all")
   const [outfits, setOutfits] = useState([])
+  const [profile, setProfile] = useState(null)
+  const [credits, setCredits] = useState(0)
 
   const [placeholderText, setPlaceholderText] = useState("")
   const [showCursor, setShowCursor] = useState(true)
@@ -31,6 +36,21 @@ export default function HomePage() {
     const loadedOutfits = storage.getOutfits()
     setOutfits(loadedOutfits)
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile()
+    }
+  }, [user])
+
+  const fetchProfile = async () => {
+    const { data, error } = await supabaseAuth.from("profiles").select("*").eq("id", user.id).single()
+
+    if (data) {
+      setProfile(data)
+      setCredits(data.credits ?? 0)
+    }
+  }
 
   useEffect(() => {
     let typingTimer
@@ -85,12 +105,11 @@ export default function HomePage() {
     const styledProfile = storage.getStyledProfile()
 
     const profile = {
-      ...existingProfile, // Keep existing data (body shape, etc)
+      ...existingProfile,
       gender: existingProfile.gender || styledProfile?.gender || "unisex",
-      height: existingProfile.height || styledProfile?.height_cm ? "average" : "average", // map if needed
+      height: existingProfile.height || styledProfile?.height_cm ? "average" : "average",
       bodyShape: existingProfile.bodyShape || styledProfile?.body_type || "average",
       style: existingProfile.style || "casual",
-      // Update with new session inputs
       occasion: eventType && eventType !== "all" ? eventType : existingProfile.occasion || "everyday",
       budget: budget && budget !== "all" ? budget : existingProfile.budget || "moderate",
       colors: existingProfile.colors || [],
@@ -185,6 +204,89 @@ export default function HomePage() {
             </div>
           </motion.div>
         </section>
+
+        {user && (
+          <motion.section
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="w-full bg-white py-20 px-6 md:px-12 border-t border-black/5"
+          >
+            <div className="max-w-[1200px] mx-auto">
+              <div className="text-center mb-12">
+                <span className="block text-xs font-bold tracking-[0.3em] uppercase mb-4 text-muted-foreground">
+                  Your Account
+                </span>
+                <h2 className="text-4xl md:text-5xl font-serif text-black mb-4">Welcome Back</h2>
+                <div className="w-24 h-[1px] bg-black mx-auto" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Profile Card */}
+                <Link href="/profile" className="group">
+                  <div className="border border-black/10 p-8 hover:border-black/30 transition-all duration-300 hover:shadow-lg bg-[#FAFAFA]">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 bg-black text-white flex items-center justify-center rounded-full">
+                        <User className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-serif text-xl">{user.user_metadata?.full_name || "Style Icon"}</h3>
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground">Member</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      View and edit your style profile, preferences, and account settings.
+                    </p>
+                    <span className="text-xs font-bold uppercase tracking-wider group-hover:underline">
+                      View Profile
+                    </span>
+                  </div>
+                </Link>
+
+                {/* Credits Card */}
+                <Link href="/credits" className="group">
+                  <div className="border border-black/10 p-8 hover:border-black/30 transition-all duration-300 hover:shadow-lg bg-[#FAFAFA]">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 bg-black text-white flex items-center justify-center rounded-full">
+                        <CreditCard className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-serif text-xl">{credits} Credits</h3>
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground">Available</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Purchase more credits to unlock outfits and shopping links.
+                    </p>
+                    <span className="text-xs font-bold uppercase tracking-wider group-hover:underline">
+                      Buy Credits
+                    </span>
+                  </div>
+                </Link>
+
+                {/* Style Quiz Card */}
+                <Link href="/quiz" className="group">
+                  <div className="border border-black/10 p-8 hover:border-black/30 transition-all duration-300 hover:shadow-lg bg-[#FAFAFA]">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 bg-black text-white flex items-center justify-center rounded-full">
+                        <Sparkles className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-serif text-xl">Style Quiz</h3>
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground">Questionnaire</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Update your style preferences and get better outfit recommendations.
+                    </p>
+                    <span className="text-xs font-bold uppercase tracking-wider group-hover:underline">Take Quiz</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </motion.section>
+        )}
 
         <motion.section
           initial={{ opacity: 0, y: 50 }}

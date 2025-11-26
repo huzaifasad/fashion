@@ -65,30 +65,19 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-6 text-black/40">Support</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a href="#" className="hover:text-black/60 transition-colors">
+                <a href="mailto:support@buythelook.com" className="hover:text-black/60 transition-colors">
                   Contact Us
                 </a>
               </li>
-              <li>
-                <a href="#" className="hover:text-black/60 transition-colors">
+              {/* <li>
+                <Link href="/faq" className="hover:text-black/60 transition-colors">
                   FAQs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-black/60 transition-colors">
-                  Shipping & Returns
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-black/60 transition-colors">
-                  Size Guide
-                </a>
-              </li>
+                </Link>
+              </li> */}
             </ul>
           </div>
         </div>
@@ -96,12 +85,12 @@ export function Footer() {
         <div className="border-t border-black/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-black/40">
           <p>© 2025 BuyTheLook. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-black transition-colors">
+            <Link href="/privacy" className="hover:text-black transition-colors">
               Privacy Policy
-            </a>
-            <a href="#" className="hover:text-black transition-colors">
+            </Link>
+            <Link href="/terms" className="hover:text-black transition-colors">
               Terms of Service
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -717,3 +717,18 @@ h6 {
 .onboarding-tooltip {
   z-index: 10002 !important;
 }
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0px rgba(0,0,0,0.1);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(0,0,0,0.35);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(0,0,0,0.1);
+  }
+}
+
+.pulse-cta {
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}

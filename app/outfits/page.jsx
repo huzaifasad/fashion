@@ -13,6 +13,7 @@ import { supabaseAuth } from "@/lib/supabase-auth-client"
 import { useAuth } from "@/components/auth-provider"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import OnboardingTour from "@/components/onboarding-tour"
+import { Footer } from "../../components/footer"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -829,6 +830,7 @@ function OutfitsContent() {
             </motion.div>
           ))}
         </motion.div>
+        <Footer/>
       </div>
     </main>
   )

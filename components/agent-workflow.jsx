@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Check, Sparkles, Search, Shirt, User, ScanLine, ShieldCheck } from "lucide-react"
+import { Check, Sparkles, Search, Shirt, User, ScanLine, ShieldCheck ,Hourglass} from "lucide-react"
 
 const steps = [
   {
@@ -56,15 +56,20 @@ export function AgentWorkflow({ currentStep, logs, skipImageAnalysis = false }) 
           Our agents are analyzing thousands of combinations to find your perfect match.
         </p>
 
-        <motion.p
+         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-6 text-sm text-accent font-medium animate-pulse"
+          className="mt-8 flex items-center justify-center gap-3"
         >
-          This may take up to one minute...
-        </motion.p>
+          <motion.div
+            animate={{ rotate: [0, 180, 180, 360] }}
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+          >
+            <Hourglass className="w-5 h-5 text-accent" />
+          </motion.div>
+          <span className="text-sm text-accent font-medium">This process may take up to one minute</span>
+        </motion.div>
       </motion.div>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Left Column: Progress Steps */}
         <div className="lg:col-span-5 space-y-8 relative">

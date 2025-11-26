@@ -267,13 +267,25 @@ export function OutfitCard({ outfit, isUnlocked, hasLinksUnlocked, onUnlock, hid
             </Link>
           ) : (
             <button
-              onClick={() => onUnlock && onUnlock(outfit.id)}
-              className="block w-full bg-black text-white text-center py-5 text-xs font-bold tracking-[0.25em] uppercase hover:bg-zinc-900 transition-all duration-300 border-t border-white/10"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <Lock className="w-3.5 h-3.5" /> Buy Your Look (1 Credit)
-              </span>
-            </button>
+  onClick={() => onUnlock && onUnlock(outfit.id)}
+  className="relative overflow-hidden group 
+             block cursor-pointer w-full bg-black text-white 
+             text-center py-5 text-xs font-bold 
+             tracking-[0.25em] uppercase border-t border-white/10"
+>
+  {/* Sweep layer */}
+  <span
+    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
+               translate-x-[-100%] group-hover:translate-x-[100%]
+               transition-all duration-700 ease-out"
+  />
+
+  {/* Button Content */}
+  <span className="relative z-10 flex items-center justify-center gap-2">
+    <Lock className="w-3.5 h-3.5" /> Buy Your Look (1 Credit)
+  </span>
+</button>
+
           )}
         </div>
       )}

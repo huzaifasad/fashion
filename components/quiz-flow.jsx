@@ -62,44 +62,45 @@ const QUIZ_STEPS = [
   {
     id: "style",
     question: "What is your style?",
-    options: [
-      {
-        value: "casual",
-        label: "Casual",
-        description: "Relaxed and comfortable",
-        image: "/casual.jpg",
-      },
-      {
-        value: "formal",
-        label: "Formal",
-        description: "Professional and polished",
-        image: "/formal.jpg",
-      },
-      {
-        value: "sporty",
-        label: "Sporty",
-        description: "Athletic and active",
-        image: "/sport.jpg",
-      },
-      {
-        value: "elegant",
-        label: "Elegant",
-        description: "Sophisticated and refined",
-        image: "/elegants.jpg",
-      },
-      {
-        value: "streetwear",
-        label: "Streetwear",
-        description: "Urban and trendy",
-        image: "/street.jpg",
-      },
-      {
-        value: "bohemian",
-        label: "Bohemian",
-        description: "Free-spirited and artistic",
-        image: "/Bohemian.jpg",
-      },
-    ],
+   options: [
+  {
+    value: "Nordic",
+    label: "Nordic",
+    description: "Clean, cozy, and nature-inspired style",
+    image: "/casual.jpg",
+  },
+  {
+    value: "Modern",
+    label: "Modern",
+    description: "Professional, sharp, and fashion-forward",
+    image: "/formal.jpg",
+  },
+  {
+    value: "Classic ",
+    label: "Classic ",
+    description: "Timeless, elegant, and structured style",
+    image: "/028933c6-ec95-471c-804c-0aa31a0e1f15.png",
+  },
+  {
+    value: " BohoChic",
+    label: " Boho Chic",
+    description: "Free-spirited, artistic, and earthy aesthetic",
+    image: "/elegants.jpg",
+  },
+  {
+    value: "Casual",
+    label: "Casual",
+    description: "Relaxed, everyday, and comfortable style",
+    image: "/street.jpg",
+  },
+  {
+    value: "Minimalist",
+    label: "Minimalist",
+    description: "Simple, clean, and essential-focused look",
+    image: "/Bohemian.jpg",
+  },
+],
+
   },
   {
     id: "occasion",
@@ -312,7 +313,7 @@ export function QuizFlow({ styledProfile }) {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8 animate-fade-in">
+    <div className="container mx-auto max-w-4xl px-4 py-8 animate-fade-in mt-20">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
 
       <div className="mb-12" data-tour="progress-bar">
